@@ -467,7 +467,9 @@ app.post("/setup/api/run", requireSetupAuth, async (req, res) => {
     const helpText = channelsHelp.output || "";
 
     const supports = (name) => helpText.includes(name);
-
+    if (!payload.telegramToken && process.env.TELEGRAM_BOT_TOKEN) {
+      payload.telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+      }
     if (payload.telegramToken?.trim()) {
       if (!supports("telegram")) {
         extra += "\n[telegram] skipped (this clawdbot build does not list telegram in `channels add --help`)\n";

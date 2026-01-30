@@ -43,9 +43,14 @@ FROM node:22-bookworm
 ENV NODE_ENV=production
 
 RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    ca-certificates \
-  && rm -rf /var/lib/apt/lists/*
+&& DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+ca-certificates \
+curl \
+sqlite3 \
+git \
+&& rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://tailscale.com/install.sh | sh
 
 WORKDIR /app
 
@@ -66,4 +71,8 @@ COPY src ./src
 ENV CLAWDBOT_PUBLIC_PORT=8080
 ENV PORT=8080
 EXPOSE 8080
-CMD ["node", "src/server.js"]
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
+CMD ["/app/start.sh"]
+
